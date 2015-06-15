@@ -50,7 +50,7 @@ namespace mssqlclr
 	{
 	}
 
-	uint32_t sqlgeo_reader::read_uint32()
+	inline uint32_t sqlgeo_reader::read_uint32()
 	{
 		std::uint32_t val;
 		if (pos_ + 4 > size_) {
@@ -63,7 +63,7 @@ namespace mssqlclr
 		return val;
 	}
 
-	uint16_t sqlgeo_reader::read_uint16()
+	inline uint16_t sqlgeo_reader::read_uint16()
 	{
 		std::uint16_t val;
 		if (pos_ + 2 > size_) {
@@ -75,7 +75,7 @@ namespace mssqlclr
 
 		return val;
 	}
-	uint8_t sqlgeo_reader::read_uint8()
+	inline uint8_t sqlgeo_reader::read_uint8()
 	{
 		std::uint8_t val;
 		if (pos_ + 1 > size_) {
@@ -87,7 +87,7 @@ namespace mssqlclr
 
 		return val;
 	}
-	double sqlgeo_reader::read_double()
+	inline double sqlgeo_reader::read_double()
 	{
 		double val;
 		if (pos_ + 8 > size_) {
@@ -105,7 +105,7 @@ namespace mssqlclr
 		if (points.empty()) {
 			return;
 		}
-		for (auto point : points)
+		for (auto& point : points)
 		{
 			point.Z = read_double();
 		}
@@ -117,7 +117,7 @@ namespace mssqlclr
 		if (points.empty()) {
 			return;
 		}
-		for (auto point : points)
+		for (auto& point : points)
 		{
 			point.M = read_double();
 		}
@@ -125,6 +125,7 @@ namespace mssqlclr
 	}
 	std::vector<Point> sqlgeo_reader::readPoints(uint32_t count, bool isGeography) {
 		std::vector<Point> points;
+		points.reserve(count);
 
 		if (count < 1) {
 			return std::vector<Point>();
@@ -149,6 +150,8 @@ namespace mssqlclr
 
 	std::vector<Figure> sqlgeo_reader::readFigures(uint32_t count, SerializationProperties properties) {
 		std::vector<Figure> figures;
+		figures.reserve(count);
+
 		if (count == 0) {
 			return figures;
 		}
@@ -158,10 +161,10 @@ namespace mssqlclr
 		}
 		else {
 			for (int i = 0; i < count; i++) {
-
 				Figure f;
 				f.Attribute = (FIGURE)read_uint8();
 				f.Offset = read_uint32();
+
 				figures.push_back(f);
 			}
 		}
@@ -169,6 +172,8 @@ namespace mssqlclr
 	}
 	std::vector<Shape> sqlgeo_reader::readShapes(uint32_t count, SerializationProperties properties) {
 		std::vector<Shape> shapes;
+		shapes.reserve(count);
+
 		if (count < 1) {
 			return shapes;
 		}
